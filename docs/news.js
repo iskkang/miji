@@ -57,10 +57,7 @@ function displayNews(doc, append = false) {
         const newsHtml = `
             <div class="table">
             <tr>
-                <th>${title}</th>
-                <th>${source}</th>
-                <th>${date}</th>
-                <th><a href="${link}" target="_blank">기사 읽기</a></th>
+                <th><a href="${link}" target="_blank">${title}</a></th>
              </tr>
             </div>
         `;

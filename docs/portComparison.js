@@ -10,7 +10,7 @@ async function renderPortComparisonChart() {
             x: portValues24,  // y축을 x축으로 변경
             type: 'bar',
             name: '24',
-            marker: { color: 'purple' },
+            marker: { color: 'blue' },
             orientation: 'h'  // 수평 막대 그래프
         };
 
@@ -19,7 +19,7 @@ async function renderPortComparisonChart() {
             x: portValues23,  // y축을 x축으로 변경
             type: 'bar',
             name: '23',
-            marker: { color: 'pink' },
+            marker: { color: 'purple' },
             orientation: 'h'  // 수평 막대 그래프
         };
 

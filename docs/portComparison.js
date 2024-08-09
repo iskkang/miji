@@ -2,15 +2,15 @@ async function renderPortComparisonChart() {
     const portComparisonData = await fetchData('port-comparison');
     if (portComparisonData && portComparisonData.length > 0) {
         const portNames = portComparisonData.map(item => item.name);
-        const portValues24 = portComparisonData.map(item => item['June 24']);
-        const portValues23 = portComparisonData.map(item => item['June 23']);
+        const portValues24 = portComparisonData.map(item => item['July 24']);
+        const portValues23 = portComparisonData.map(item => item['July 23']);
 
         const portTrace24 = {
             y: portNames,  // x축을 y축으로 변경
             x: portValues24,  // y축을 x축으로 변경
             type: 'bar',
             name: '24',
-            marker: { color: 'orange' },
+            marker: { color: 'purple' },
             orientation: 'h'  // 수평 막대 그래프
         };
 
@@ -19,7 +19,7 @@ async function renderPortComparisonChart() {
             x: portValues23,  // y축을 x축으로 변경
             type: 'bar',
             name: '23',
-            marker: { color: 'blue' },
+            marker: { color: 'pink' },
             orientation: 'h'  // 수평 막대 그래프
         };
 

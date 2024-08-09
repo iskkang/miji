@@ -94,9 +94,8 @@
 *
 */
 /* ############### FONTS IMPORT ############### */
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900");
-@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800");
-@import url("https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800");
+@import url("http://fonts.googleapis.com/earlyaccess/notosanskr.css"); 
+
 /* ############### BOOTSTRAP FRAMEWORK ############### */
 /*!
  * Bootstrap v4.5.2 (https://getbootstrap.com/)

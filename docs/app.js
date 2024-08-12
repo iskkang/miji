@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchData(endpoint) {
-    const BASE_URL = 'https://mclab.onrender.com/';
+    const BASE_URL = 'https://port-0-miji-lysc4ja0acad2542.sel4.cloudtype.app/';
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             headers: {

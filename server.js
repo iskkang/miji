@@ -54,7 +54,7 @@ async function fetchHaesaNews() {
                 const titleElement = $(element).find('h4.titles a');
                 const title = titleElement.text().trim();
                 const link = 'https://www.haesainfo.com' + titleElement.attr('href');
-                const dateElement = $(element).find('em.info.dated');
+                const dateElement = $(element).find('span.byline em').last();
                 const date = dateElement.text().trim();
                 articles.push({ title, link, date });
             }
@@ -76,6 +76,30 @@ app.get('/haesa-news', async (req, res) => {
         <html>
         <head>
             <title>HAESA News</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                h1 {
+                    text-align: center;
+                }
+                #news-articles {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .article {
+                    border-bottom: 1px solid #ccc;
+                    padding: 10px 0;
+                }
+                .article h2 {
+                    margin: 0;
+                    font-size: 18px;
+                }
+                .article p {
+                    font-size: 14px;
+                    color: #555;
+                }
+            </style>
         </head>
         <body>
             <h1>Top 5 HAESA News Articles</h1>
@@ -84,7 +108,7 @@ app.get('/haesa-news', async (req, res) => {
 
     articles.forEach(article => {
         newsHtml += `
-            <div>
+            <div class="article">
                 <h2><a href="${article.link}" target="_blank">${article.title}</a></h2>
                 <p>${article.date}</p>
             </div>
@@ -99,7 +123,6 @@ app.get('/haesa-news', async (req, res) => {
 
     res.send(newsHtml);
 });
-
 
 
 // Fetch data functions

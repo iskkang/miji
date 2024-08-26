@@ -323,7 +323,7 @@
                <p class="card-text">Disaster</p>
                 </div><!-- card-header -->
                 <div class="card-body">
-                  <div id="news-articles"></div>
+                  <div id="haesaNewsContainer"></div>
                     
                 </div><!-- card-body -->
               </div><!-- card -->
@@ -406,6 +406,38 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+    async function loadHaesaNews() {
+        try {
+            const response = await fetch('/haesa-news');
+            if (response.ok) {
+                const data = await response.json();
+                displayHaesaNews(data.articles);
+            } else {
+                console.error('Failed to fetch HAESA news');
+            }
+        } catch (error) {
+            console.error('Error fetching HAESA news:', error);
+        }
+    }
+
+    function displayHaesaNews(articles) {
+        const container = document.getElementById('haesaNewsContainer');
+        container.innerHTML = ''; // Clear previous articles
+
+        articles.forEach(article => {
+            const articleElement = document.createElement('div');
+            articleElement.innerHTML = `
+                <h4><a href="${article.url}" target="_blank">${article.title}</a></h4>
+                <p>${article.date}</p>
+            `;
+            container.appendChild(articleElement);
+        });
+    }
+
+    // Load HAESA news when the page loads
+    document.addEventListener('DOMContentLoaded', loadHaesaNews);
+</script>
     
 
 </body>

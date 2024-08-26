@@ -49,7 +49,7 @@ async function fetchHaesaNews() {
         const $ = cheerio.load(html);
 
         const articles = [];
-        $('#section-list ul.type1 li').each((index, element) => {
+        $('#section-list ul.type2 li').each((index, element) => {
             if (index < 5) {  // Limit to top 5 articles
                 const titleElement = $(element).find('h4.titles a');
                 const title = titleElement.text().trim();

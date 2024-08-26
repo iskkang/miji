@@ -1,6 +1,6 @@
 async function fetchNewsArticles() {
     try {
-        const targetUrl = '/heasa-news';  // Calls the /heasa-news endpoint on your server
+        const targetUrl = 'https://port-0-miji-lysc4ja0acad2542.sel4.cloudtype.app/heasa-news';  // Calls the /heasa-news endpoint on your server
 
         // Fetch the news data from the server
         const response = await fetch(targetUrl);

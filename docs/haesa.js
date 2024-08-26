@@ -1,7 +1,3 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-
-// Function to fetch HAESA news articles
 async function fetchHaesaNews() {
     try {
         const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N12&view_type=sm';

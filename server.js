@@ -40,6 +40,40 @@ app.use(
     })
 );
 
+// Fetch news articles from HAESA
+app.get('/heasa-news', async (req, res) => {
+    try {
+        const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N12&view_type=sm';
+        const response = await axios.get(targetUrl);
+
+        if (response.status !== 200) {
+            return res.status(500).send('Failed to fetch HAESA news');
+        }
+
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const articles = [];
+
+        $('#section-list ul.type1 li').each((index, element) => {
+            if (index < 5) { // Limit to top 5 articles
+                const titleElement = $(element).find('h4.titles a');
+                const title = titleElement.text().trim();
+                const link = 'https://www.haesainfo.com' + titleElement.attr('href');
+                const date = $(element).find('em.info.dated').text().trim();
+
+                articles.push({ title, link, date });
+            }
+        });
+
+        res.json({ articles });
+
+    } catch (error) {
+        console.error('Failed to fetch HAESA news:', error);
+        res.status(500).send('Failed to fetch HAESA news');
+    }
+});
+
+
 // Fetch data functions
 const fetchGlobalExports = async () => {
     const url = "https://www.econdb.com/widgets/global-trade/data/?type=export&net=0&transform=0";

@@ -70,41 +70,8 @@ async function fetchHaesaNews() {
 app.get('/haesa-news', async (req, res) => {
     const articles = await fetchHaesaNews();
     
-    // Render the HTML template directly
-    let newsHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>HAESA News</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                }
-                h1 {
-                    text-align: center;
-                }
-                #news-articles {
-                    max-width: 800px;
-                    margin: 0 auto;
-                }
-                .article {
-                    border-bottom: 1px solid #ccc;
-                    padding: 10px 0;
-                }
-                .article h2 {
-                    margin: 0;
-                    font-size: 18px;
-                }
-                .article p {
-                    font-size: 14px;
-                    color: #555;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>Top 5 HAESA News Articles</h1>
-            <div id="news-articles">
-    `;
+    // Render only the news articles as HTML snippets
+    let newsHtml = '';
 
     articles.forEach(article => {
         newsHtml += `
@@ -115,14 +82,9 @@ app.get('/haesa-news', async (req, res) => {
         `;
     });
 
-    newsHtml += `
-            </div>
-        </body>
-        </html>
-    `;
-
-    res.send(newsHtml);
+    res.send(newsHtml); // Send only the news articles HTML
 });
+
 
 
 // Fetch data functions

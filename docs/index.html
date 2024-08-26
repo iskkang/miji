@@ -409,7 +409,7 @@
     <script>
     async function loadHaesaNews() {
         try {
-            const response = await fetch('/haesa-news');
+            const response = await fetch('/http://localhost:3000/haesa-news');
             if (response.ok) {
                 const data = await response.json();
                 displayHaesaNews(data.articles);

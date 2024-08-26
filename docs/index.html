@@ -403,19 +403,17 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-        <script>
-        // Fetch and display HAESA news
+    <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/haesa-news');
-                const html = await response.text();
-                document.getElementById('haesa-news-container').innerHTML = html;
-            } catch (error) {
-                console.error('Failed to load HAESA news:', error);
-            }
-        });
-    </script>
+    try {
+        const response = await fetch('/haesa-news');
+        const html = await response.text();
+        document.getElementById('haesa-news-container').innerHTML = html;
+    } catch (error) {
+        console.error('Failed to load HAESA news:', error);
+    }
+});
+</script>
     
 
 </body>

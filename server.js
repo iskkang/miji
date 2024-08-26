@@ -41,14 +41,65 @@ app.use(
 );
 
 // Fetch news articles from HAESA
-app.get('/haesa-news', async (req, res) => {
+async function fetchHaesaNews() {
+    const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N12&view_type=sm';
     try {
-        const articles = await fetchHaesaNews();
-        res.json({ articles });
+        const response = await axios.get(targetUrl);
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        const articles = [];
+        $('#section-list ul.type1 li').each((index, element) => {
+            if (index < 5) {  // Limit to top 5 articles
+                const titleElement = $(element).find('h4.titles a');
+                const title = titleElement.text().trim();
+                const link = 'https://www.haesainfo.com' + titleElement.attr('href');
+                const dateElement = $(element).find('em.info.dated');
+                const date = dateElement.text().trim();
+                articles.push({ title, link, date });
+            }
+        });
+
+        return articles;
     } catch (error) {
-        res.status(500).send('Failed to fetch HAESA news');
+        console.error('Failed to fetch HAESA news:', error);
+        return [];
     }
+}
+
+app.get('/haesa-news', async (req, res) => {
+    const articles = await fetchHaesaNews();
+    
+    // Render the HTML template directly
+    let newsHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>HAESA News</title>
+        </head>
+        <body>
+            <h1>Top 5 HAESA News Articles</h1>
+            <div id="news-articles">
+    `;
+
+    articles.forEach(article => {
+        newsHtml += `
+            <div>
+                <h2><a href="${article.link}" target="_blank">${article.title}</a></h2>
+                <p>${article.date}</p>
+            </div>
+        `;
+    });
+
+    newsHtml += `
+            </div>
+        </body>
+        </html>
+    `;
+
+    res.send(newsHtml);
 });
+
 
 
 // Fetch data functions

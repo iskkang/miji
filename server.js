@@ -42,7 +42,7 @@ app.use(
 
 // Fetch news articles from HAESA
 async function fetchHaesaNews() {
-    const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N12&view_type=sm';
+    const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
     try {
         const response = await axios.get(targetUrl);
         const html = response.data;

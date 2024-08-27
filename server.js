@@ -70,6 +70,43 @@ async function fetchArticles() {
   }
 }
 
+// 각 페이지에서 다운로드 데이터를 가져오는 함수
+async function fetchWeekly(page) {
+  const url = `https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=${page}`;
+  
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    
+    const $ = cheerio.load(data);
+    const downloads = [];
+
+    $('td.row a').each((i, elem) => {
+      const title = $(elem).attr('title');
+      const href = `https://www.kmi.re.kr/web/trebook/${$(elem).attr('href')}`;
+      
+      downloads.push({ title, href });
+    });
+
+    return downloads;
+  } catch (error) {
+    console.error('Error fetching downloads:', error);
+    return [];
+  }
+}
+// 여러 페이지에서 다운로드 데이터를 수집하는 함수
+async function fetchAllWeekly() {
+  let allDownloads = [];
+  for (let page = 1; page <= 10; page++) {
+    const downloads = await fetchWeekly(page);
+    allDownloads = allDownloads.concat(downloads);
+  }
+  return allDownloads;
+}
+
 
 // Fetch data functions
 const fetchGlobalExports = async () => {
@@ -448,6 +485,11 @@ app.get('/media/:source', async (req, res) => {
 app.get('/api/articles', async (req, res) => {
   const articles = await fetchArticles();
   res.json(articles);
+});
+
+app.get('/api/weekly', async (req, res) => {
+  const downloads = await fetchAllWeekly();
+  res.json(downloads);
 });
 
 

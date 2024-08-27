@@ -74,26 +74,28 @@ async function fetchArticles() {
 async function fetchReports() {
   const baseUrl = 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=';
   const headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    };
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  };
   const totalPages = 10;
   const reports = [];
 
   for (let page = 1; page <= totalPages; page++) {
     const url = `${baseUrl}${page}`;
     try {
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(url, { headers });  // 헤더 추가
       const $ = cheerio.load(data);
 
       $('td.row').each((index, element) => {
         const titleElement = $(element).find('a').first();
         const title = titleElement.attr('title') || 'Weekly Report';
-        const href = titleElement.next('a').attr('href'); // 문서뷰어로 열기 링크
 
-        if (title && href) {
+        // PDF 보기 링크 가져오기
+        const viewerLink = $(element).find('a').eq(1).attr('href');
+
+        if (title && viewerLink) {
           reports.push({
             title: title.replace('File Download', '').trim(),
-            link: `https://www.kmi.re.kr${href}`
+            link: `https://www.kmi.re.kr${viewerLink}`  // 링크 앞에 도메인 추가
           });
         }
       });
@@ -487,14 +489,13 @@ app.get('/api/articles', async (req, res) => {
 
 app.get('/api/weekly', async (req, res) => {
   try {
-    const downloads = await fetchAllWeekly();  // fetchAllWeekly 함수에서 데이터를 크롤링하고 반환
+    const downloads = await fetchReports();  // fetchReports 함수 호출
     res.json(downloads);  // 클라이언트로 JSON 형식으로 응답
   } catch (error) {
     console.error('Error fetching weekly reports:', error);
     res.status(500).json({ error: 'Failed to fetch weekly reports' });
   }
 });
-
 
 
 

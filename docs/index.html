@@ -14,26 +14,23 @@
 
         <!-- azia CSS -->
         <link rel="stylesheet" href="/css/azia.css">
-    <style>
-        /* Ensure basic styles for news articles */
-        #news-articles {
-            max-width: 800px;
-            margin: 20px auto;
-            font-family: Arial, sans-serif;
-        }
-        .article {
-            border-bottom: 1px solid #ccc;
-            padding: 10px 0;
-        }
-        .article h2 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .article p {
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
+     <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .article {
+      margin-bottom: 20px;
+    }
+    .article a {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .article p {
+      color: #555;
+    }
+  </style>
   </head>
 <body>
   <div class="az-header">
@@ -341,7 +338,7 @@
                <p class="card-text">Disaster</p>
                 </div><!-- card-header -->
                 <div class="card-body">
-                  <div id="haesa-news-container"></div>
+                  <div id="articles"></div>
                     
                 </div><!-- card-body -->
               </div><!-- card -->
@@ -424,16 +421,36 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('/haesa-news');
-        const html = await response.text();
-        document.getElementById('haesa-news-container').innerHTML = html;
-    } catch (error) {
-        console.error('Failed to load HAESA news:', error);
-    }
-});
-</script>
+    // 페이지 로드 시 articles 데이터를 가져와서 화면에 렌더링
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/articles');
+        const articles = await response.json();
+
+        const articlesContainer = document.getElementById('articles');
+
+        articles.forEach(article => {
+          const articleDiv = document.createElement('div');
+          articleDiv.classList.add('article');
+
+          const articleLink = document.createElement('a');
+          articleLink.href = article.link;
+          articleLink.target = '_blank';
+          articleLink.textContent = article.title;
+
+          const articleDate = document.createElement('p');
+          articleDate.textContent = article.date;
+
+          articleDiv.appendChild(articleLink);
+          articleDiv.appendChild(articleDate);
+
+          articlesContainer.appendChild(articleDiv);
+        });
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    });
+  </script>
     
 
 </body>

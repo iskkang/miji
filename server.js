@@ -8,7 +8,6 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
-const path = require('path');
 
 // Initialize the app
 const app = express();

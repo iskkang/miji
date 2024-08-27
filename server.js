@@ -88,7 +88,7 @@ async function fetchReports() {
       $('td.row').each((index, element) => {
         const titleElement = $(element).find('a').first();
         const title = titleElement.attr('title') || 'Weekly Report';
-        const href = titleElement.next('a').attr('href');
+        const href = titleElement.next('a').attr('href'); // 문서뷰어로 열기 링크
 
         if (title && href) {
           reports.push({
@@ -483,6 +483,16 @@ app.get('/media/:source', async (req, res) => {
 app.get('/api/articles', async (req, res) => {
   const articles = await fetchArticles();
   res.json(articles);
+});
+
+app.get('/api/weekly', async (req, res) => {
+  try {
+    const downloads = await fetchAllWeekly();  // fetchAllWeekly 함수에서 데이터를 크롤링하고 반환
+    res.json(downloads);  // 클라이언트로 JSON 형식으로 응답
+  } catch (error) {
+    console.error('Error fetching weekly reports:', error);
+    res.status(500).json({ error: 'Failed to fetch weekly reports' });
+  }
 });
 
 

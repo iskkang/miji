@@ -345,32 +345,18 @@
             </div><!-- col -->
             <div class="col-lg-8 mg-t-20 mg-lg-t-0">
               <div class="card card-table-one">
-                     <div class="container">
-        <h1 class="mt-4">Weekly Downloads</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadModal">
-            Show Weekly Downloads
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="downloadModalLabel">Weekly Download Files</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul id="downloadList" class="list-group">
-                            <!-- Download links will be appended here dynamically -->
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                          <h1 class="mt-4">Weekly Downloads</h1>
+                  <table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>PDF Link</th>
+        </tr>
+    </thead>
+    <tbody id="report-table-body">
+        <!-- Reports will be dynamically inserted here -->
+    </tbody>
+</table>
             
 
     </div>
@@ -401,6 +387,7 @@
     <script src="/disasterMap.js"></script>
     <script src="/differ.js"></script>
     <script src="/insight.js"></script>
+    <script src="/weekly.js"></script>
 
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>

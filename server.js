@@ -70,41 +70,39 @@ async function fetchArticles() {
   }
 }
 
-// 각 페이지에서 다운로드 데이터를 가져오는 함수
-async function fetchWeekly(page) {
-  const url = `https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=${page}`;
-  
-  try {
-    const { data } = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
-    
-    const $ = cheerio.load(data);
-    const downloads = [];
+// Fetch data Reports
+async function fetchReports() {
+  const baseUrl = 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=';
+  const headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    };
+  const totalPages = 10;
+  const reports = [];
 
-    $('td.row a').each((i, elem) => {
-      const title = $(elem).attr('title');
-      const href = `https://www.kmi.re.kr/web/trebook/${$(elem).attr('href')}`;
-      
-      downloads.push({ title, href });
-    });
+  for (let page = 1; page <= totalPages; page++) {
+    const url = `${baseUrl}${page}`;
+    try {
+      const { data } = await axios.get(url);
+      const $ = cheerio.load(data);
 
-    return downloads;
-  } catch (error) {
-    console.error('Error fetching downloads:', error);
-    return [];
+      $('td.row').each((index, element) => {
+        const titleElement = $(element).find('a').first();
+        const title = titleElement.attr('title') || 'Weekly Report';
+        const href = titleElement.next('a').attr('href');
+
+        if (title && href) {
+          reports.push({
+            title: title.replace('File Download', '').trim(),
+            link: `https://www.kmi.re.kr${href}`
+          });
+        }
+      });
+    } catch (error) {
+      console.error(`Error fetching page ${page}:`, error.message);
+    }
   }
-}
-// 여러 페이지에서 다운로드 데이터를 수집하는 함수
-async function fetchAllWeekly() {
-  let allDownloads = [];
-  for (let page = 1; page <= 10; page++) {
-    const downloads = await fetchWeekly(page);
-    allDownloads = allDownloads.concat(downloads);
-  }
-  return allDownloads;
+
+  return reports;
 }
 
 

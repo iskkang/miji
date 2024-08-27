@@ -485,10 +485,7 @@ app.get('/api/articles', async (req, res) => {
   res.json(articles);
 });
 
-app.get('/api/weekly', async (req, res) => {
-  const downloads = await fetchAllWeekly();
-  res.json(downloads);
-});
+
 
 
 

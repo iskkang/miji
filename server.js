@@ -40,13 +40,16 @@ app.use(
     })
 );
 
-// Fetch news articles from HAESA
 // 웹사이트에서 기사 데이터를 fetching하는 함수
 async function fetchArticles() {
   const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
   
   try {
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
     const $ = cheerio.load(data);
 
     const articles = [];

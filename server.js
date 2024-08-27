@@ -8,6 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
+const path = require('path');
 
 // Initialize the app
 const app = express();
@@ -41,50 +42,31 @@ app.use(
 );
 
 // Fetch news articles from HAESA
-async function fetchHaesaNews() {
-    const targetUrl = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
-    try {
-        const response = await axios.get(targetUrl);
-        const html = response.data;
-        const $ = cheerio.load(html);
+// 웹사이트에서 기사 데이터를 fetching하는 함수
+async function fetchArticles() {
+  const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
+  
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
 
-        const articles = [];
-        $('#section-list ul.type2 li').each((index, element) => {
-            if (index < 5) {  // Limit to top 5 articles
-                const titleElement = $(element).find('h4.titles a');
-                const title = titleElement.text().trim();
-                const link = 'https://www.haesainfo.com' + titleElement.attr('href');
-                const dateElement = $(element).find('span.byline em').last();
-                const date = dateElement.text().trim();
-                articles.push({ title, link, date });
-            }
-        });
+    const articles = [];
 
-        return articles;
-    } catch (error) {
-        console.error('Failed to fetch HAESA news:', error);
-        return [];
-    }
-}
+    $('section#section-list ul.type2 li').each((i, elem) => {
+      const titleElement = $(elem).find('h4.titles a');
+      const title = titleElement.text().trim();
+      const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
+      const date = $(elem).find('span.byline em').last().text().trim();
 
-app.get('/haesa-news', async (req, res) => {
-    const articles = await fetchHaesaNews();
-    
-    // Render only the news articles as HTML snippets
-    let newsHtml = '';
-
-    articles.forEach(article => {
-        newsHtml += `
-            <div class="article">
-                <h2><a href="${article.link}" target="_blank">${article.title}</a></h2>
-                <p>${article.date}</p>
-            </div>
-        `;
+      articles.push({ title, link, date });
     });
 
-    res.send(newsHtml); // Send only the news articles HTML
-});
-
+    return articles;
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return [];
+  }
+}
 
 
 // Fetch data functions
@@ -459,6 +441,11 @@ app.get('/media/:source', async (req, res) => {
     } else {
         res.status(404).send('Invalid media source');
     }
+});
+
+app.get('/api/articles', async (req, res) => {
+  const articles = await fetchArticles();
+  res.json(articles);
 });
 
 

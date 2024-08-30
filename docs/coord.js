@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 // Array of URLs to fetch
 const fetchUrls = [
   'https://www.econdb.com/maritime/search/?ab=45.0,-36.0,47.368421052631575,-32.21052631578947',

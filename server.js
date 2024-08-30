@@ -120,19 +120,8 @@ app.get('/api/data1', async (req, res) => {
         const response = await fetch(url);
         const htmlText = await response.text();
 
-        // HTML을 파싱하여 JSON 데이터로 변환
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, "text/html");
-        const items = doc.querySelectorAll(".news-item");
-
-        const data = Array.from(items).map(item => ({
-            title: item.querySelector(".news-title a").textContent,
-            content: item.querySelector(".news-content").textContent,
-            sourceLink: item.querySelector(".news-source").href
-        }));
-
-        // JSON 형식으로 클라이언트에 응답
-        res.json(data);
+        // HTML 텍스트를 클라이언트에 반환
+        res.send(htmlText);
 
     } catch (error) {
         console.error('기사 데이터를 가져오는 중 오류 발생:', error);

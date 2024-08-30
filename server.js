@@ -45,33 +45,35 @@ app.use(
 
 // Fetch data Articles
 async function fetchArticles() {
-    const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
-    
-    try {
-    const { data } = await axios.get(url, {
+  const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
+  
+  try {
+    const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       }
     });
-    const $ = cheerio.load(data);
-    
-        const articles = [];
-    
-        $('section#section-list ul.type2 li').each((i, elem) => {
-            const titleElement = $(elem).find('h4.titles a');
-            const title = titleElement.text().trim();
-            const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
-            const date = $(elem).find('span.byline em').last().text().trim();
-    
-            articles.push({ title, link, date });
-        });
-    
-        return articles;
-    } catch (error) {
-        console.error('Error fetching articles:', error);
-        return [];
+    console.log('Status Code:', response.status); // 상태 코드 확인
+    if (response.status === 200) {
+      const $ = cheerio.load(response.data);
+      const articles = [];
+      $('section#section-list ul.type2 li').each((i, elem) => {
+        const titleElement = $(elem).find('h4.titles a');
+        const title = titleElement.text().trim();
+        const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
+        const date = $(elem).find('span.byline em').last().text().trim();
+
+        articles.push({ title, link, date });
+      });
+      return articles;
     }
+  } catch (error) {
+    console.error('Error fetching articles:', error.response ? error.response.status : error.message);
+    return [];
+  }
 }
+
+fetchArticles().then(articles => console.log(articles));
 
 // Fetch data Reports
 async function fetchReports() {

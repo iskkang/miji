@@ -41,81 +41,33 @@ app.use(
 );
 
 
-//fetch Data news1
-// 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)
-// 웹사이트에서 기사 데이터를 fetching하는 함수
-app.get('/logis-news', async (req, res) => {
-    try {
-        // 오늘 날짜를 YYYYMMDD 형식으로 구함
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const dateString = `${year}${month}${day}`;
 
-        // 대상 URL
-        const url = `https://www.forwarder.kr/logis_news/${dateString}`;
-
-        // 데이터 가져오기
-        const { data } = await axios.get(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-
-        // cheerio로 HTML 파싱
-        const $ = cheerio.load(data);
-        const newsList = [];
-
-        // 뉴스 아이템들 파싱
-        $('.news-list .news-item').each((index, element) => {
-            const title = $(element).find('.news-title a').text();
-            const link = $(element).find('.news-title a').attr('href');
-            const content = $(element).find('.news-content').text();
-            const source = $(element).find('.news-source').attr('href');
-
-            newsList.push({
-                title,
-                link,
-                content,
-                source
-            });
-        });
-
-        // JSON 형식으로 반환
-        res.json(newsList);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to fetch news data' });
-    }
-});
 
 // Fetch data Articles
 async function fetchArticles() {
-  const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
-  
-  try {
-    const { data } = await axios.get(url);
-    const $ = cheerio.load(data);
-
-    const articles = [];
-
-    $('section#section-list ul.type2 li').each((i, elem) => {
-      const titleElement = $(elem).find('h4.titles a');
-      const title = titleElement.text().trim();
-      const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
-      const date = $(elem).find('span.byline em').last().text().trim();
-
-      articles.push({ title, link, date });
-    });
-
-    return articles;
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-    return [];
-  }
+    const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
+    
+    try {
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+    
+        const articles = [];
+    
+        $('section#section-list ul.type2 li').each((i, elem) => {
+            const titleElement = $(elem).find('h4.titles a');
+            const title = titleElement.text().trim();
+            const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
+            const date = $(elem).find('span.byline em').last().text().trim();
+    
+            articles.push({ title, link, date });
+        });
+    
+        return articles;
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+        return [];
+    }
 }
-
 
 // Fetch data Reports
 async function fetchReports() {
@@ -542,6 +494,55 @@ app.get('/api/weekly', async (req, res) => {
     console.error('Error fetching weekly reports:', error);
     res.status(500).json({ error: 'Failed to fetch weekly reports' });
   }
+});
+
+//fetch Data news1
+// 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)
+// 웹사이트에서 기사 데이터를 fetching하는 함수
+app.get('/logis-news', async (req, res) => {
+    try {
+        // 오늘 날짜를 YYYYMMDD 형식으로 구함
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateString = `${year}${month}${day}`;
+
+        // 대상 URL
+        const url = `https://www.forwarder.kr/logis_news/${dateString}`;
+
+        // 데이터 가져오기
+        const { data } = await axios.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
+
+        // cheerio로 HTML 파싱
+        const $ = cheerio.load(data);
+        const newsList = [];
+
+        // 뉴스 아이템들 파싱
+        $('.news-list .news-item').each((index, element) => {
+            const title = $(element).find('.news-title a').text();
+            const link = $(element).find('.news-title a').attr('href');
+            const content = $(element).find('.news-content').text();
+            const source = $(element).find('.news-source').attr('href');
+
+            newsList.push({
+                title,
+                link,
+                content,
+                source
+            });
+        });
+
+        // JSON 형식으로 반환
+        res.json(newsList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch news data' });
+    }
 });
 
 

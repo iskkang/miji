@@ -75,7 +75,6 @@ async function fetchArticles() {
       });
       return articles;
     }
-  } 
 }
 
 fetchArticles().then(articles => console.log(articles));

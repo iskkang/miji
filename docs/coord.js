@@ -113,21 +113,21 @@ async function fetchInChunks(chunkSize, delayTime) {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
           }
         });
-        return response.data;
+        // Return the entire response data
+        return {
+          url: fetchUrl,
+          data: response.data.response.docs || []
+        };
       } catch (error) {
         console.error(`Error fetching ${fetchUrl}:`, error);
-        return null;  // Return null or handle the error as needed
+        return { url: fetchUrl, data: [] };  // Return empty array or handle the error as needed
       }
     });
 
     const responses = await Promise.all(fetchPromises);
 
-    // Extract data from response.docs and add to results
-    responses.forEach(data => {
-      if (data && data.response && data.response.docs) {
-        results.push(...data.response.docs);
-      }
-    });
+    // Add each response to results as a separate JSON object
+    results.push(...responses);
 
     // Wait for the specified delay before the next chunk
     if (i + chunkSize < fetchUrls.length) {
@@ -139,3 +139,4 @@ async function fetchInChunks(chunkSize, delayTime) {
 }
 
 module.exports = { fetchInChunks };
+

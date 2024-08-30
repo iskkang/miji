@@ -109,19 +109,6 @@ async function fetchUrlData(url) {
   }
 }
 
-module.exports = { fetchUrls, fetchUrlDat
+module.exports = { fetchUrls, fetchUrlData };
 
-    // Add each response to results as a separate JSON object
-    results.push(...responses);
-
-    // Wait for the specified delay before the next chunk
-    if (i + chunkSize < fetchUrls.length) {
-      await delay(delayTime);
-    }
-  }
-
-  return results;
-}
-
-module.exports = { fetchInChunks };
 

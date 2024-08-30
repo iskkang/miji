@@ -110,24 +110,34 @@ async function fetchReports() {
 //fetch Data news1
 // 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)
 app.get('/api/data1', async (req, res) => {
+    const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
+    
     try {
-        // 현재 날짜를 YYYYMMDD 형식으로 변환
-        const today = new Date();
-        const selectedDate = today.toISOString().slice(0, 10).replace(/-/g, "");
+        const { data } = await axios.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
+        const $ = cheerio.load(data);
 
-        // 기사 데이터를 가져오기 위한 URL
-        const url = `https://www.forwarder.kr/logis_news/${selectedDate}`;
-        const response = await fetch(url);
-        const htmlText = await response.text();
+        const articles = [];
 
-        // HTML 텍스트를 클라이언트에 반환
-        res.send(htmlText);
+        $('section#section-list ul.type2 li').each((i, elem) => {
+            const titleElement = $(elem).find('h4.titles a');
+            const title = titleElement.text().trim();
+            const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
+            const date = $(elem).find('span.byline em').last().text().trim();
 
+            articles.push({ title, link, date });
+        });
+
+        res.json(articles);
     } catch (error) {
-        console.error('기사 데이터를 가져오는 중 오류 발생:', error);
-        res.status(500).json({ message: '기사 데이터를 가져오는 중 오류가 발생했습니다.' });
+        console.error('Error fetching articles:', error);
+        res.status(500).json({ message: 'Error fetching articles' });
     }
 });
+
 
 
 // Fetch data functions

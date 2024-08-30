@@ -90,6 +90,33 @@ app.get('/logis-news', async (req, res) => {
     }
 });
 
+// Fetch data Articles
+async function fetchArticles() {
+  const url = 'https://www.haesainfo.com/news/articleList.html?sc_section_code=S1N2&view_type=sm';
+  
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+
+    const articles = [];
+
+    $('section#section-list ul.type2 li').each((i, elem) => {
+      const titleElement = $(elem).find('h4.titles a');
+      const title = titleElement.text().trim();
+      const link = `https://www.haesainfo.com${titleElement.attr('href')}`;
+      const date = $(elem).find('span.byline em').last().text().trim();
+
+      articles.push({ title, link, date });
+    });
+
+    return articles;
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return [];
+  }
+}
+
+
 // Fetch data Reports
 async function fetchReports() {
   const baseUrl = 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=';

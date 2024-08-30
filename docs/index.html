@@ -361,6 +361,42 @@
 
     </div>
     </div>
+               <div id="customMap"></div>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('customMap').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(map);
+
+    // Custom red icon for the markers
+    const redIcon = L.icon({
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x-red.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      shadowSize: [41, 41]
+    });
+
+    async function fetchData() {
+      const response = await fetch('/coord');
+      const data = await response.json();
+
+      data.forEach(doc => {
+        // Split the "coord" string into latitude and longitude
+        const [lat, lon] = doc.coord.split(',').map(coord => parseFloat(coord.trim()));
+
+        if (lat && lon) {
+          L.marker([lat, lon], { icon: redIcon }).addTo(map)
+            .bindPopup(`<b>${doc.name || 'No Name'}</b><br>${doc.info || 'No Info'}`);  // Replace with actual field names
+        }
+      });
+    }
+
+    fetchData();
+  </script>
     </div>
     
     <div class="az-footer ht-40">

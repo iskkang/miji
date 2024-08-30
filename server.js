@@ -41,6 +41,14 @@ app.use(
 );
 
 
+function getFormattedDate(offsetDays) {
+    const today = new Date();
+    today.setDate(today.getDate() - offsetDays); // offsetDays만큼 날짜 조정
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}${month}${day}`;
+}
 
 
 // Fetch data Articles
@@ -67,10 +75,7 @@ async function fetchArticles() {
       });
       return articles;
     }
-  } catch (error) {
-    console.error('Error fetching articles:', error.response ? error.response.status : error.message);
-    return [];
-  }
+  } 
 }
 
 fetchArticles().then(articles => console.log(articles));
@@ -505,52 +510,46 @@ app.get('/api/weekly', async (req, res) => {
 //fetch Data news1
 // 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)
 // 웹사이트에서 기사 데이터를 fetching하는 함수
-app.get('/logis-news', async (req, res) => {
+app.get('/logis-news/:page', async (req, res) => {
     try {
-        // 오늘 날짜를 YYYYMMDD 형식으로 구함
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const dateString = `${year}${month}${day}`;
+        const page = parseInt(req.params.page, 10) || 1;
+        const dateString = getFormattedDate(page - 1); // 페이지 번호에 따라 날짜 계산
 
-        // 대상 URL
         const url = `https://www.forwarder.kr/logis_news/${dateString}`;
 
-        // 데이터 가져오기
         const { data } = await axios.get(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
         });
 
-        // cheerio로 HTML 파싱
         const $ = cheerio.load(data);
         const newsList = [];
 
-        // 뉴스 아이템들 파싱
         $('.news-list .news-item').each((index, element) => {
             const title = $(element).find('.news-title a').text();
             const link = $(element).find('.news-title a').attr('href');
             const content = $(element).find('.news-content').text();
-            const source = $(element).find('.news-source').attr('href');
+            let sourceText = $(element).find('.news-source').text();
+
+            if (sourceText.startsWith('출처 : ')) {
+                sourceText = sourceText.replace('출처 : ', '').split(' - ')[0].trim();
+            }
 
             newsList.push({
                 title,
                 link,
                 content,
-                source
+                source: sourceText
             });
         });
 
-        // JSON 형식으로 반환
         res.json(newsList);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch news data' });
     }
 });
-
 
 
 

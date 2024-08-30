@@ -8,6 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
+const { fetchInChunks } = require('./coord');  // coord.js 파일을 불러옵니다.
 
 // Initialize the app
 const app = express();

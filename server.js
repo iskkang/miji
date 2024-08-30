@@ -560,7 +560,7 @@ app.get('/logis-news/:page', async (req, res) => {
 app.get('/coord', async (req, res) => {
   try {
     // Fetch data in chunks of 5 URLs with a 5000ms (5 seconds) delay between each chunk
-    const data = await fetchInChunks(5, 5000);
+    const data = await fetchInChunks(2, 2000);
 
     // Send extracted data as JSON response
     res.json(data);

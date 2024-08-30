@@ -73,8 +73,12 @@ async function fetchArticles() {
 
         articles.push({ title, link, date });
       });
-      return articles;
+            return articles;
     }
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return [];
+  }
 }
 
 fetchArticles().then(articles => console.log(articles));

@@ -516,9 +516,10 @@ app.get('/api/weekly', async (req, res) => {
 app.get('/logis-news/:page', async (req, res) => {
     try {
         const page = parseInt(req.params.page, 10) || 1;
-        const dateString = getFormattedDate(page - 1); // 페이지 번호에 따라 날짜 계산
+        const dateString = getFormattedDate(page - 1);
 
         const url = `https://www.forwarder.kr/logis_news/${dateString}`;
+        console.log(`Fetching data from URL: ${url}`);
 
         const { data } = await axios.get(url, {
             headers: {
@@ -549,7 +550,7 @@ app.get('/logis-news/:page', async (req, res) => {
 
         res.json(newsList);
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Failed to fetch news data' });
     }
 });

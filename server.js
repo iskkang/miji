@@ -556,7 +556,7 @@ app.get('/logis-news/:page', async (req, res) => {
 });
 
 // Array of URLs to fetch
-const urls = [
+const fetchUrls = [
   'https://www.econdb.com/maritime/search/?ab=45.0,-36.0,47.368421052631575,-32.21052631578947',
 'https://www.econdb.com/maritime/search/?ab=47.368421052631575,-32.21052631578947,49.73684210526315,-28.421052631578945',
 'https://www.econdb.com/maritime/search/?ab=49.73684210526316,-28.42105263157895,52.10526315789474,-24.63157894736842',
@@ -654,14 +654,14 @@ const urls = [
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Function to fetch data in chunks
-async function fetchInChunks(urls, chunkSize, delayTime) {
+async function fetchInChunks(fetchUrls, chunkSize, delayTime) {
   const results = [];
 
-  for (let i = 0; i < urls.length; i += chunkSize) {
-    const chunk = urls.slice(i, i + chunkSize);
+  for (let i = 0; i < fetchUrls.length; i += chunkSize) {
+    const chunk = fetchUrls.slice(i, i + chunkSize);
 
     // Fetch all URLs in the current chunk
-    const fetchPromises = chunk.map(url => axios.get(url));
+    const fetchPromises = chunk.map(fetchUrl => axios.get(fetchUrl));
     const responses = await Promise.all(fetchPromises);
 
     // Extract data from response.docs and add to results
@@ -672,7 +672,7 @@ async function fetchInChunks(urls, chunkSize, delayTime) {
     });
 
     // Wait for the specified delay before the next chunk
-    if (i + chunkSize < urls.length) {
+    if (i + chunkSize < fetchUrls.length) {
       await delay(delayTime);
     }
   }
@@ -683,7 +683,7 @@ async function fetchInChunks(urls, chunkSize, delayTime) {
 app.get('/coord', async (req, res) => {
   try {
     // Fetch data in chunks of 5 URLs with a 5000ms (5 seconds) delay between each chunk
-    const data = await fetchInChunks(urls, 5, 5000);
+    const data = await fetchInChunks(fetchUrls, 5, 5000);
 
     // Send extracted data as JSON response
     res.json(data);

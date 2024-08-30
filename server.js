@@ -107,6 +107,38 @@ async function fetchReports() {
   return reports;
 }
 
+//fetch Data news1
+app.get('/api/new1', async (req, res) => {
+    try {
+        // 현재 날짜를 YYYYMMDD 형식으로 변환
+        const today = new Date();
+        const selectedDate = today.toISOString().slice(0, 10).replace(/-/g, "");
+
+        // 뉴스 데이터를 가져오기 위한 URL
+        const url = `https://www.forwarder.kr/logis_news/${selectedDate}`;
+        const response = await fetch(url);
+        const htmlText = await response.text();
+
+        // HTML을 파싱하여 JSON 데이터로 변환
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+        const newsItems = doc.querySelectorAll(".news-item");
+
+        const newsData = Array.from(newsItems).map(item => ({
+            title: item.querySelector(".news-title a").textContent,
+            content: item.querySelector(".news-content").textContent,
+            sourceLink: item.querySelector(".news-source").href
+        }));
+
+        // JSON 형식으로 클라이언트에 응답
+        res.json(newsData);
+
+    } catch (error) {
+        console.error('뉴스 데이터를 가져오는 중 오류 발생:', error);
+        res.status(500).json({ message: '뉴스 데이터를 가져오는 중 오류가 발생했습니다.' });
+    }
+});
+
 
 // Fetch data functions
 const fetchGlobalExports = async () => {

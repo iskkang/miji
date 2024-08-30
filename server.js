@@ -8,7 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
-const { fetchInChunks } = require('./docs/coord');  // coord.js 파일을 불러옵니다.
+const { fetchUrls, fetchUrlData } = require('./docs/coord');
 
 // Initialize the app
 const app = express();
@@ -559,11 +559,14 @@ app.get('/logis-news/:page', async (req, res) => {
 
 app.get('/coord', async (req, res) => {
   try {
-    // Fetch data in chunks of 5 URLs with a 5000ms (5 seconds) delay between each chunk
-    const data = await fetchInChunks(2, 2000);
+    const fetchPromises = fetchUrls.map(async url => {
+      const data = await fetchUrlData(url);
+      return { url, data };
+    });
 
-    // Send extracted data as JSON response
-    res.json(data);
+    const results = await Promise.all(fetchPromises);
+    
+    res.json(results);
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while fetching data');

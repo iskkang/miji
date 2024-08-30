@@ -95,36 +95,21 @@ const fetchUrls = [
 'https://www.econdb.com/maritime/search/?ab=-90,108,-45,180',
 ];
 
-// Function to delay execution
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-// Function to fetch data in chunks with headers
-async function fetchInChunks(chunkSize, delayTime) {
-  const results = [];
-
-  for (let i = 0; i < fetchUrls.length; i += chunkSize) {
-    const chunk = fetchUrls.slice(i, i + chunkSize);
-
-    // Fetch all URLs in the current chunk with headers
-    const fetchPromises = chunk.map(async fetchUrl => {
-      try {
-        const response = await axios.get(fetchUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-          }
-        });
-        // Return the entire response data
-        return {
-          url: fetchUrl,
-          data: response.data.response.docs || []
-        };
-      } catch (error) {
-        console.error(`Error fetching ${fetchUrl}:`, error);
-        return { url: fetchUrl, data: [] };  // Return empty array or handle the error as needed
+async function fetchUrlData(url) {
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       }
     });
+    return response.data.response.docs || [];
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error);
+    return null;
+  }
+}
 
-    const responses = await Promise.all(fetchPromises);
+module.exports = { fetchUrls, fetchUrlDat
 
     // Add each response to results as a separate JSON object
     results.push(...responses);

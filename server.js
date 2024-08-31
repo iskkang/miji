@@ -8,7 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
-const { portData } = require('./docs/port');
+const { fetchPortData, fetchAllPortsData } = require('./docs/port');
 
 // Initialize the app
 const app = express();
@@ -556,17 +556,20 @@ app.get('/logis-news/:page', async (req, res) => {
     }
 });
 
-app.get('/port/:portName', async (req, res) => {
-    const portName = req.params.portName.toUpperCase(); // 포트 이름을 URL에서 가져옴
-    
-    try {
-        const data = await fetchData(portName);
-        res.json(data); // 가져온 JSON 데이터를 클라이언트에 반환합니다.
-    } catch (error) {
-        res.status(500).send(`Error fetching data for port: ${portName}`);
-    }
+app.get('/port/:name', async (req, res) => {
+  const portName = req.params.name;
+  const data = await fetchPortData(portName);
+  if (data) {
+    res.json(data);
+  } else {
+    res.status(404).json({ error: `Data for port ${portName} not found` });
+  }
 });
 
+app.get('/ports', async (req, res) => {
+  const data = await fetchAllPortsData();
+  res.json(data);
+});
 
 
 

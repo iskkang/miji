@@ -8,7 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
-const { getPortDataByName, getAllPortsData } = require('./port');
+const { getPortDataByName, getAllPortsData } = require('./docs/port');
 
 // Initialize the app
 const app = express();

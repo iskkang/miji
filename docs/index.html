@@ -10,8 +10,6 @@
     <link href="/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
     <link href="/lib/typicons.font/typicons.css" rel="stylesheet">
     <link href="/lib/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css' rel='stylesheet' />
 
 
         <!-- azia CSS -->
@@ -298,31 +296,6 @@
           </div>
          </div>
        </div>
-<div class="row row-sm mg-b-20">
-        <div class="col-lg-4">
-          <div id="mapContainer"></div>
-              <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic3RhcmJveCIsImEiOiJjbHoweWlnZGIyb290MmtzaGtrMzZuaTZxIn0.805eS7n8Cj9kIy_iqIFF1w';
-        const map = new mapboxgl.Map({
-            container: 'mapContainer',  // 여기서 mapContainer를 사용합니다.
-            style: 'mapbox://styles/mapbox/streets-v9',
-            center: [0, 0],
-            zoom: 2
-        });
-
-        map.on('moveend', async () => {
-            const bounds = map.getBounds();
-            const ab = `${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng}`;
-            const response = await fetch(`/location?ab=${ab}`);
-            const coords = await response.json();
-
-            coords.forEach(coord => {
-                new mapboxgl.Marker().setLngLat([coord.lon, coord.lat]).addTo(map);
-            });
-        });
-    </script>
-        </div>
-</div>
 
        <div class="row row-sm mg-b-20">
         <div class="col-lg-4">
@@ -372,44 +345,9 @@
             </div><!-- col -->
             <div class="col-lg-8 mg-t-20 mg-lg-t-0">
               <div class="card card-table-one">
-               <div id="customMap"></div>
+              
     </div>
     </div>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script>
-    var customMap = L.map('customMap').setView([0, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-    }).addTo(map);
-
-    // Custom red icon for the markers
-    const redIcon = L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x-red.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-      shadowSize: [41, 41]
-    });
-
-    async function fetchData() {
-      const response = await fetch('/coord');
-      const data = await response.json();
-
-      data.forEach(doc => {
-        // Split the "coord" string into latitude and longitude
-        const [lat, lon] = doc.coord.split(',').map(coord => parseFloat(coord.trim()));
-
-        if (lat && lon) {
-          L.marker([lat, lon], { icon: redIcon }).addTo(map)
-            .bindPopup(`<b>${doc.name || 'No Name'}</b><br>${doc.info || 'No Info'}`);  // Replace with actual field names
-        }
-      });
-    }
-
-    fetchData();
-  </script>
     </div>
     
     <div class="az-footer ht-40">

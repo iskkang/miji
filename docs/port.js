@@ -65,4 +65,4 @@ async function fetchData(portName) {
     }
 }
 
-module.exports = { fetchData };
+module.exports = { portData };

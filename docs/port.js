@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const portData = [
+const portUrl = [
   { name: 'SGN', url: 'https://www.econdb.com/maritime/ports/async/SG%20SIN/' },
   { name: 'SHA', url: 'https://www.econdb.com/maritime/ports/async/CN%20SHA/' },
   { name: 'PUS', url: 'https://www.econdb.com/maritime/ports/async/KR%20PUS/' },
@@ -43,9 +43,9 @@ const portData = [
   { name: 'VUT', url: 'https://www.econdb.com/maritime/ports/async/VN%20VUT/' }
 ];
 
-async function fetchPortData(portName) {
+async function getPortDataByName(portName) {
   try {
-    const port = portData.find(p => p.name === portName);
+    const port = portUrl.find(p => p.name === portName);
     if (!port) {
       throw new Error(`Port ${portName} not found`);
     }
@@ -58,15 +58,15 @@ async function fetchPortData(portName) {
   }
 }
 
-async function fetchAllPortsData() {
-  const results = await Promise.all(portData.map(async (port) => {
-    const data = await fetchPortData(port.name);
+async function getAllPortsData() {
+  const results = await Promise.all(portUrl.map(async (port) => {
+    const data = await getPortDataByName(port.name);
     return { name: port.name, data };
   }));
   return results.filter(result => result.data !== null);
 }
 
 module.exports = {
-  fetchPortData,
-  fetchAllPortsData
+  getPortDataByName,
+  getAllPortsData
 };

@@ -298,7 +298,8 @@
           </div>
          </div>
        </div>
-
+<div class="row row-sm mg-b-20">
+        <div class="col-lg-4">
           <div id="mapContainer"></div>
               <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoic3RhcmJveCIsImEiOiJjbHoweWlnZGIyb290MmtzaGtrMzZuaTZxIn0.805eS7n8Cj9kIy_iqIFF1w';
@@ -320,6 +321,8 @@
             });
         });
     </script>
+        </div>
+</div>
 
        <div class="row row-sm mg-b-20">
         <div class="col-lg-4">
@@ -374,7 +377,7 @@
     </div>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    var map = L.map('customMap').setView([0, 0], 2);
+    var customMap = L.map('customMap').setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,

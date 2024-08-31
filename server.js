@@ -9,6 +9,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
 const { getPortDataByName, getAllPortsData } = require('./docs/port');
+const { getVessel, getAllVessel } = require('./docs/vessel');
 
 // Initialize the app
 const app = express();
@@ -568,6 +569,21 @@ app.get('/port/:name', async (req, res) => {
 
 app.get('/ports', async (req, res) => {
   const data = await getAllPortsData();
+  res.json(data);
+});
+
+app.get('/vessel/:name', async (req, res) => {
+  const vesselName = req.params.name;
+  const data = await getVessel(vesselName);
+  if (data) {
+    res.json(data);
+  } else {
+    res.status(404).json({ error: `Data for vessel ${vesselName} not found` });
+  }
+});
+
+app.get('/vessels', async (req, res) => {
+  const data = await getAllVessel();
   res.json(data);
 });
 

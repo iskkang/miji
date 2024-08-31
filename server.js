@@ -573,6 +573,29 @@ app.get('/coord', async (req, res) => {
   }
 });
 
+app.get('/location', async (req, res) => {
+    const { ab } = req.query;
+    const url = `https://www.econdb.com/maritime/search/?ab=${ab}`;
+    
+    // 헤더 설정
+    const headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "application/json"
+    };
+
+    try {
+        const response = await axios.get(url, { headers });
+        const coords = response.data.response.docs.map(doc => ({
+            lat: parseFloat(doc.coord.split(',')[0]),
+            lon: parseFloat(doc.coord.split(',')[1])
+        }));
+        res.json(coords);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Error fetching data');
+    }
+});
+
 
 
 

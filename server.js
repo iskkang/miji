@@ -8,7 +8,7 @@ const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetchAndExtractData = require('./docs/fetchDisaster');
 const cheerio = require('cheerio');
-const { fetchPortData, fetchAllPortsData } = require('./docs/port');
+const { getPortDataByName, getAllPortsData } = require('./port');
 
 // Initialize the app
 const app = express();
@@ -558,7 +558,7 @@ app.get('/logis-news/:page', async (req, res) => {
 
 app.get('/port/:name', async (req, res) => {
   const portName = req.params.name;
-  const data = await fetchPortData(portName);
+  const data = await getPortDataByName(portName);
   if (data) {
     res.json(data);
   } else {
@@ -567,7 +567,7 @@ app.get('/port/:name', async (req, res) => {
 });
 
 app.get('/ports', async (req, res) => {
-  const data = await fetchAllPortsData();
+  const data = await getAllPortsData();
   res.json(data);
 });
 

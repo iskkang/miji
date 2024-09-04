@@ -119,7 +119,8 @@ const reportUrls = [
            if (title && viewerLink) {
             reports.push({
               title: title.replace('File Download', '').trim(),
-              link: `https://www.kmi.re.kr${viewerLink}`
+              link: `https://www.kmi.re.kr${viewerLink}`,
+              image: imageUrl // 이미지 URL 추가
             });
           }
         });

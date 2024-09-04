@@ -516,40 +516,40 @@ app.get('/api/articles', async (req, res) => {
 });
 
 app.get('/api/weekly', async (req, res) => {
-    try {
-      const reports = await fetchReports(reportUrls[0].baseUrl, reportUrls[0].totalPages);
-      res.json(reports);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch weekly reports' });
-    }
-  });
-  
-  app.get('/api/global_weekly', async (req, res) => {
-    try {
-      const reports = await fetchReports(reportUrls[1].baseUrl, reportUrls[1].totalPages);
-      res.json(reports);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch global weekly reports' });
-    }
-  });
-  
-  app.get('/api/russia', async (req, res) => {
-    try {
-      const reports = await fetchReports(reportUrls[2].baseUrl, reportUrls[2].totalPages);
-      res.json(reports);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch Russia reports' });
-    }
-  });
-  
-  app.get('/api/america', async (req, res) => {
-    try {
-      const reports = await fetchReports(reportUrls[3].baseUrl, reportUrls[3].totalPages);
-      res.json(reports);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch America reports' });
-    }
-  });
+  try {
+    const reports = await fetchReports('https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=', 10);
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch weekly reports' });
+  }
+});
+
+app.get('/api/global_weekly', async (req, res) => {
+  try {
+    const reports = await fetchReports('https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=373&page=', 1);
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch global weekly reports' });
+  }
+});
+
+app.get('/api/russia', async (req, res) => {
+  try {
+    const reports = await fetchReports('https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=288&page=', 10);
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Russia reports' });
+  }
+});
+
+app.get('/api/america', async (req, res) => {
+  try {
+    const reports = await fetchReports('https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=371&page=', 1);
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch America reports' });
+  }
+});
 
 //fetch Data news1
 // 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)

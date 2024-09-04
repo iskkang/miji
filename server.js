@@ -110,9 +110,13 @@ const reportUrls = [
         $('td.row').each((index, element) => {
           const titleElement = $(element).find('a').first();
           const title = titleElement.attr('title') || 'Report';
-  
           const viewerLink = $(element).find('a').eq(1).attr('href');
-          if (title && viewerLink) {
+          const imageElement = $(element).find('img');  // 이미지 태그 찾기
+          const imageSrc = imageElement.attr('src');  // 이미지 src 속성
+
+           const imageUrl = imageSrc ? `https://www.kmi.re.kr/web/trebook/${imageSrc}` : null;
+            
+           if (title && viewerLink) {
             reports.push({
               title: title.replace('File Download', '').trim(),
               link: `https://www.kmi.re.kr${viewerLink}`

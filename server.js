@@ -86,41 +86,45 @@ async function fetchArticles() {
 fetchArticles().then(articles => console.log(articles));
 
 // Fetch data Reports
-async function fetchReports() {
-  const baseUrl = 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=';
+const reportUrls = [
+    { baseUrl: 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=135&page=', totalPages: 10 },
+    { baseUrl: 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=373&page=', totalPages: 1 }, // 1페이지 고정
+    { baseUrl: 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=288&page=', totalPages: 10 },
+    { baseUrl: 'https://www.kmi.re.kr/web/trebook/list.do?rbsIdx=371&page=', totalPages: 1 }
+  ];
+  
   const headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
   };
-  const totalPages = 10;
-  const reports = [];
-
-  for (let page = 1; page <= totalPages; page++) {
-    const url = `${baseUrl}${page}`;
-    try {
-      const { data } = await axios.get(url, { headers });  // 헤더 추가
-      const $ = cheerio.load(data);
-
-      $('td.row').each((index, element) => {
-        const titleElement = $(element).find('a').first();
-        const title = titleElement.attr('title') || 'Weekly Report';
-
-        // PDF 보기 링크 가져오기
-        const viewerLink = $(element).find('a').eq(1).attr('href');
-
-        if (title && viewerLink) {
-          reports.push({
-            title: title.replace('File Download', '').trim(),
-            link: `https://www.kmi.re.kr${viewerLink}`  // 링크 앞에 도메인 추가
-          });
-        }
-      });
-    } catch (error) {
-      console.error(`Error fetching page ${page}:`, error.message);
+  
+// 각 URL을 위한 함수 (기존 fetchReports와 같은 역할)
+  async function fetchReports(baseUrl, totalPages) {
+    const reports = [];
+  
+    for (let page = 1; page <= totalPages; page++) {
+      const url = `${baseUrl}${page}`;
+      try {
+        const { data } = await axios.get(url, { headers });
+        const $ = cheerio.load(data);
+  
+        $('td.row').each((index, element) => {
+          const titleElement = $(element).find('a').first();
+          const title = titleElement.attr('title') || 'Report';
+  
+          const viewerLink = $(element).find('a').eq(1).attr('href');
+          if (title && viewerLink) {
+            reports.push({
+              title: title.replace('File Download', '').trim(),
+              link: `https://www.kmi.re.kr${viewerLink}`
+            });
+          }
+        });
+      } catch (error) {
+        console.error(`Error fetching page ${page} from ${baseUrl}:`, error.message);
+      }
     }
+    return reports;
   }
-
-  return reports;
-}
 
 
 // Fetch data functions
@@ -503,14 +507,40 @@ app.get('/api/articles', async (req, res) => {
 });
 
 app.get('/api/weekly', async (req, res) => {
-  try {
-    const downloads = await fetchReports();  // fetchReports 함수 호출
-    res.json(downloads);  // 클라이언트로 JSON 형식으로 응답
-  } catch (error) {
-    console.error('Error fetching weekly reports:', error);
-    res.status(500).json({ error: 'Failed to fetch weekly reports' });
-  }
-});
+    try {
+      const reports = await fetchReports(reportUrls[0].baseUrl, reportUrls[0].totalPages);
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch weekly reports' });
+    }
+  });
+  
+  app.get('/api/global_weekly', async (req, res) => {
+    try {
+      const reports = await fetchReports(reportUrls[1].baseUrl, reportUrls[1].totalPages);
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch global weekly reports' });
+    }
+  });
+  
+  app.get('/api/russia', async (req, res) => {
+    try {
+      const reports = await fetchReports(reportUrls[2].baseUrl, reportUrls[2].totalPages);
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch Russia reports' });
+    }
+  });
+  
+  app.get('/api/america', async (req, res) => {
+    try {
+      const reports = await fetchReports(reportUrls[3].baseUrl, reportUrls[3].totalPages);
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch America reports' });
+    }
+  });
 
 //fetch Data news1
 // 기사 데이터를 가져오는 API 엔드포인트 (경로: /api/data1)

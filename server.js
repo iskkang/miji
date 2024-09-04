@@ -97,9 +97,8 @@ const reportUrls = [
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
   };
   
-// 각 URL을 위한 함수 (기존 fetchReports와 같은 역할)
 async function fetchReports(baseUrl, totalPages) {
-const reports = [];
+  const reports = [];
 
   for (let page = 1; page <= totalPages; page++) {
     const url = `${baseUrl}${page}`;
@@ -111,20 +110,11 @@ const reports = [];
         const titleElement = $(element).find('a').first();
         const title = titleElement.attr('title') || 'Report';
 
-        const viewerLink = $(element).find('a').attr('href');
-
-        // 이미지 태그를 찾을 때 <img> 태그가 <a> 태그 안에 있는지 확인
-        const imageElement = $(element).find('a img[src^="image.do"]');
-        const imageSrc = imageElement.attr('src');  // 이미지 src 속성 추출
-
-        // 이미지 URL을 완성
-        const imageUrl = imageSrc ? `https://www.kmi.re.kr/web/trebook/${imageSrc}` : null;
-
+        const viewerLink = $(element).find('a').eq(1).attr('href');
         if (title && viewerLink) {
           reports.push({
             title: title.replace('File Download', '').trim(),
-            link: `https://www.kmi.re.kr${viewerLink}`,
-            image: imageUrl // 이미지 URL 추가
+            link: `https://www.kmi.re.kr${viewerLink}`
           });
         }
       });

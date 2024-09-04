@@ -98,38 +98,42 @@ const reportUrls = [
   };
   
 // 각 URL을 위한 함수 (기존 fetchReports와 같은 역할)
-  async function fetchReports(baseUrl, totalPages) {
-    const reports = [];
-  
-    for (let page = 1; page <= totalPages; page++) {
-      const url = `${baseUrl}${page}`;
-      try {
-        const { data } = await axios.get(url, { headers });
-        const $ = cheerio.load(data);
-  
-        $('td.row').each((index, element) => {
-          const titleElement = $(element).find('a').first();
-          const title = titleElement.attr('title') || 'Report';
-          const viewerLink = $(element).find('a').eq(1).attr('href');
-          const imageElement = $(element).find('img');  // 이미지 태그 찾기
-          const imageSrc = imageElement.attr('src');  // 이미지 src 속성
+ async function fetchReports(baseUrl, totalPages) {
+  const reports = [];
 
-           const imageUrl = imageSrc ? `https://www.kmi.re.kr/web/trebook/${imageSrc}` : null;
-            
-           if (title && viewerLink) {
-            reports.push({
-              title: title.replace('File Download', '').trim(),
-              link: `https://www.kmi.re.kr${viewerLink}`,
-              image: imageUrl // 이미지 URL 추가
-            });
-          }
-        });
-      } catch (error) {
-        console.error(`Error fetching page ${page} from ${baseUrl}:`, error.message);
-      }
+  for (let page = 1; page <= totalPages; page++) {
+    const url = `${baseUrl}${page}`;
+    try {
+      const { data } = await axios.get(url, { headers });
+      const $ = cheerio.load(data);
+
+      $('td.row').each((index, element) => {
+        const titleElement = $(element).find('a').first();
+        const title = titleElement.attr('title') || 'Report';
+
+        const viewerLink = $(element).find('a').eq(1).attr('href');
+
+        // 이미지 URL을 가져오기 위한 조건: src가 image.do로 시작하는 태그 찾기
+        const imageElement = $(element).find('img[src^="image.do"]');
+        const imageSrc = imageElement.attr('src');  // 이미지 src 속성 추출
+
+        // 이미지 URL을 완성
+        const imageUrl = imageSrc ? `https://www.kmi.re.kr/web/trebook/${imageSrc}` : null;
+
+        if (title && viewerLink) {
+          reports.push({
+            title: title.replace('File Download', '').trim(),
+            link: `https://www.kmi.re.kr${viewerLink}`,
+            image: imageUrl // 이미지 URL 추가
+          });
+        }
+      });
+    } catch (error) {
+      console.error(`Error fetching page ${page} from ${baseUrl}:`, error.message);
     }
-    return reports;
   }
+  return reports;
+}
 
 
 // Fetch data functions

@@ -548,29 +548,24 @@ app.get('/logis-news/:page', async (req, res) => {
     try {
         const page = parseInt(req.params.page, 10) || 1;
         const dateString = getFormattedDate(page - 1);
-
         const url = `https://www.forwarder.kr/logis_news/${dateString}`;
         console.log(`Fetching data from URL: ${url}`);
-
         const { data } = await axios.get(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
         });
-
         const $ = cheerio.load(data);
         const newsList = [];
-
-        $('.news-list .news-item').each((index, element) => {
-            const title = $(element).find('.news-title a').text();
-            const link = $(element).find('.news-title a').attr('href');
-            const content = $(element).find('.news-content').text();
-            let sourceText = $(element).find('.news-source').text();
-
+        $('.news-list > a').each((index, element) => {
+            const $newsItem = $(element).find('.news-item');
+            const title = $newsItem.find('.news-title').text().trim();
+            const link = $(element).attr('href');
+            const content = $newsItem.find('.news-content').text().trim();
+            let sourceText = $newsItem.find('.news-source').text().trim();
             if (sourceText.startsWith('출처 : ')) {
                 sourceText = sourceText.replace('출처 : ', '').split(' - ')[0].trim();
             }
-
             newsList.push({
                 title,
                 link,
@@ -578,13 +573,13 @@ app.get('/logis-news/:page', async (req, res) => {
                 source: sourceText
             });
         });
-
         res.json(newsList);
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Failed to fetch news data' });
     }
 });
+
 
 app.get('/port/:name', async (req, res) => {
   const portName = req.params.name;

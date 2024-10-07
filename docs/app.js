@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchData(endpoint) {
-    const BASE_URL = 'https://port-0-miji-lysc4ja0acad2542.sel4.cloudtype.app/';
+    const BASE_URL = 'https://miji-production.up.railway.app/';
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             headers: {

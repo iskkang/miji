@@ -1,6 +1,6 @@
         async function fetchNews(page) {
             try {
-                const response = await fetch(`https://miji-production.up.railway.app/logis-news/${page}`);
+                const response = await fetch(`https://localhost:3000/logis-news/${page}`);
                 const newsList = await response.json();
 
                 const newsContainer = document.getElementById('news-container');

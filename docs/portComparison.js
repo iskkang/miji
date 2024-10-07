@@ -2,8 +2,8 @@ async function renderPortComparisonChart() {
     const portComparisonData = await fetchData('port-comparison');
     if (portComparisonData && portComparisonData.length > 0) {
         const portNames = portComparisonData.map(item => item.name);
-        const portValues24 = portComparisonData.map(item => item['July 24']);
-        const portValues23 = portComparisonData.map(item => item['July 23']);
+        const portValues24 = portComparisonData.map(item => item['August 24']);
+        const portValues23 = portComparisonData.map(item => item['August 23']);
 
         const portTrace24 = {
             y: portNames,  // x축을 y축으로 변경

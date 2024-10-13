@@ -1,35 +1,33 @@
 async function renderPortComparisonChart() {
     const portComparisonData = await fetchData('port-comparison');
-    if (portComparisonData && portComparisonData.length > 0) {
-        const portNames = portComparisonData.map(item => item.name);
-        const portValues24 = portComparisonData.map(item => item['August 24']);
-        const portValues23 = portComparisonData.map(item => item['August 23']);
-
-        const portTrace24 = {
-            y: portNames,  // x축을 y축으로 변경
-            x: portValues24,  // y축을 x축으로 변경
-            type: 'bar',
-            name: '24',
-            marker: { color: 'indigo' },
-            orientation: 'h'  // 수평 막대 그래프
-        };
-
-        const portTrace23 = {
-            y: portNames,  // x축을 y축으로 변경
-            x: portValues23,  // y축을 x축으로 변경
-            type: 'bar',
-            name: '23',
-            marker: { color: 'purple' },
-            orientation: 'h'  // 수평 막대 그래프
-        };
+    if (portComparisonData && portComparisonData.plots && portComparisonData.plots.length > 0) {
+        const plot = portComparisonData.plots[0];
+        const portNames = plot.data.map(item => item.name);
+        const series = plot.series;
+        
+        const traces = series.map(s => {
+            const code = s.code;
+            return {
+                y: portNames,
+                x: plot.data.map(item => item[code]),
+                type: 'bar',
+                name: s.name,
+                marker: { color: s.code.includes('24') ? 'indigo' : 'purple' },
+                orientation: 'h'
+            };
+        });
 
         const portLayout = {
-            title: '',
+            title: plot.title,
             xaxis: { title: 'Thousand TEU' },
             yaxis: { title: '' },
-            barmode: 'group'
+            barmode: 'group',
+            height: 600, // 차트 높이 설정
+            margin: { l: 150 } // 왼쪽 여백 증가 (port 이름이 잘리지 않도록)
         };
 
-        Plotly.newPlot('portComparisonChart', [portTrace24, portTrace23], portLayout);
+        Plotly.newPlot('portComparisonChart', traces, portLayout);
+    } else {
+        console.error('Invalid or empty port comparison data');
     }
 }
